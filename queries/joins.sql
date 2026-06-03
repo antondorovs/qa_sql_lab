@@ -1,23 +1,47 @@
--- INNER/LEFT/RIGHT JOIN
+-- JOIN examples for QA SQL Lab
 
--- JOIN examples
-
-SELECT *
+-- Users with their orders
+SELECT
+    u.id AS user_id,
+    u.email,
+    o.order_number,
+    o.status AS order_status,
+    o.amount
 FROM users u
 INNER JOIN orders o
-ON u.id = o.user_id;
+    ON u.id = o.user_id
+ORDER BY u.id, o.id;
 
-SELECT *
+-- All users, including users without orders
+SELECT
+    u.id AS user_id,
+    u.email,
+    o.order_number
 FROM users u
 LEFT JOIN orders o
-ON u.id = o.user_id;
+    ON u.id = o.user_id
+ORDER BY u.id;
 
-SELECT *
+-- Orders with payment details
+SELECT
+    o.id AS order_id,
+    o.order_number,
+    o.amount AS order_amount,
+    p.status AS payment_status,
+    p.amount AS payment_amount
 FROM orders o
 LEFT JOIN payments p
-ON o.id = p.order_id;
+    ON o.id = p.order_id
+ORDER BY o.id;
 
-SELECT *
+-- Users with primary addresses
+SELECT
+    u.id AS user_id,
+    u.email,
+    a.city,
+    a.country
 FROM users u
 INNER JOIN addresses a
-ON u.id = a.user_id;
+    ON u.id = a.user_id
+WHERE a.is_primary = TRUE
+ORDER BY u.id;

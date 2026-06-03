@@ -1,23 +1,38 @@
--- COUNT, SUM, AVG, GROUP BY
+-- Aggregation examples for QA SQL Lab
 
--- Aggregation examples
-
-SELECT COUNT(*)
+-- Total users
+SELECT COUNT(*) AS user_count
 FROM users;
 
-SELECT status, COUNT(*)
+-- Users by status
+SELECT status, COUNT(*) AS user_count
 FROM users
-GROUP BY status;
+GROUP BY status
+ORDER BY user_count DESC;
 
-SELECT country, COUNT(*)
+-- Users by country
+SELECT country, COUNT(*) AS user_count
 FROM users
-GROUP BY country;
+GROUP BY country
+ORDER BY country;
 
-SELECT AVG(amount)
+-- Order totals by status
+SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_amount
+FROM orders
+GROUP BY status
+ORDER BY status;
+
+-- Average paid order amount
+SELECT AVG(amount) AS average_paid_order_amount
+FROM orders
+WHERE status = 'PAID';
+
+-- Latest order date
+SELECT MAX(created_at) AS latest_order_created_at
 FROM orders;
 
-SELECT SUM(amount)
-FROM orders;
-
-SELECT MAX(created_at)
-FROM orders;
+-- Users with more than one order
+SELECT user_id, COUNT(*) AS order_count
+FROM orders
+GROUP BY user_id
+HAVING COUNT(*) > 1;

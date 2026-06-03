@@ -1,34 +1,87 @@
--- Find duplicate emails
+-- QA database validation queries
+-- Each query returns suspicious rows that should be investigated.
 
-SELECT email, COUNT(*)
+-- Duplicate emails
+SELECT email, COUNT(*) AS duplicate_count
 FROM users
 GROUP BY email
 HAVING COUNT(*) > 1;
 
--- Orders without user
-
-SELECT o.*
+-- Orders without existing users
+SELECT
+    o.id,
+    o.order_number,
+    o.user_id,
+    o.status,
+    o.amount
 FROM orders o
 LEFT JOIN users u
-ON o.user_id = u.id
+    ON o.user_id = u.id
 WHERE u.id IS NULL;
 
--- Payments without orders
-
-SELECT p.*
+-- Payments without existing orders
+SELECT
+    p.id,
+    p.order_id,
+    p.status,
+    p.amount
 FROM payments p
 LEFT JOIN orders o
-ON p.order_id = o.id
+    ON p.order_id = o.id
 WHERE o.id IS NULL;
 
--- Users created today
+-- Addresses without existing users
+SELECT
+    a.id,
+    a.user_id,
+    a.city,
+    a.country
+FROM addresses a
+LEFT JOIN users u
+    ON a.user_id = u.id
+WHERE u.id IS NULL;
 
-SELECT *
+-- Users created today
+SELECT id, email, created_at
 FROM users
 WHERE created_at::date = CURRENT_DATE;
 
 -- Orders with negative amount
-
-SELECT *
+SELECT id, order_number, amount
 FROM orders
 WHERE amount < 0;
+
+-- Users without age
+SELECT id, email, age
+FROM users
+WHERE age IS NULL;
+
+-- Successful payments without paid timestamp
+SELECT id, order_id, status, paid_at
+FROM payments
+WHERE status = 'SUCCESS'
+  AND paid_at IS NULL;
+
+-- Paid orders without successful payment
+SELECT
+    o.id,
+    o.order_number,
+    o.status AS order_status,
+    p.status AS payment_status
+FROM orders o
+LEFT JOIN payments p
+    ON o.id = p.order_id
+   AND p.status = 'SUCCESS'
+WHERE o.status = 'PAID'
+  AND p.id IS NULL;
+
+-- Order and payment amount mismatch
+SELECT
+    o.id AS order_id,
+    o.order_number,
+    o.amount AS order_amount,
+    p.amount AS payment_amount
+FROM orders o
+INNER JOIN payments p
+    ON o.id = p.order_id
+WHERE o.amount <> p.amount;
