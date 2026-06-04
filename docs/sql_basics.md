@@ -21,7 +21,12 @@ Key concepts:
 - `HAVING` filters grouped results.
 - `ORDER BY` sorts the final result.
 - `JOIN` combines related data from multiple tables.
+- `CASE` creates conditional labels or categories.
+- Subqueries let one query use the result of another query.
+- Window functions calculate values across related rows without collapsing the result set.
 
 ## QA mindset
 
 When validating data, do not only check happy paths. Look for missing records, duplicate values, invalid statuses, incorrect totals, orphan records, and impossible dates or amounts.
+
+Useful QA habit: write validation queries so they return suspicious rows. Empty result sets are easier to treat as passing checks.

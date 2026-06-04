@@ -90,3 +90,122 @@ LEFT JOIN payments p
    AND p.status = 'SUCCESS'
 WHERE o.status = 'PAID'
   AND p.id IS NULL;
+
+-- 13. Find users who do not have any orders.
+SELECT id, email
+FROM users u
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM orders o
+    WHERE o.user_id = u.id
+)
+ORDER BY id;
+
+-- 14. Find orders above the average order amount.
+SELECT id, order_number, amount
+FROM orders
+WHERE amount > (
+    SELECT AVG(amount)
+    FROM orders
+)
+ORDER BY amount DESC;
+
+-- 15. Classify users into age groups: UNKNOWN, UNDER_18, ADULT, SENIOR.
+SELECT
+    id,
+    email,
+    age,
+    CASE
+        WHEN age IS NULL THEN 'UNKNOWN'
+        WHEN age < 18 THEN 'UNDER_18'
+        WHEN age BETWEEN 18 AND 64 THEN 'ADULT'
+        ELSE 'SENIOR'
+    END AS age_group
+FROM users
+ORDER BY id;
+
+-- 16. Classify orders into QA risk levels based on amount and status.
+SELECT
+    id,
+    order_number,
+    status,
+    amount,
+    CASE
+        WHEN amount < 0 THEN 'INVALID_AMOUNT'
+        WHEN status = 'PAID' AND amount >= 200 THEN 'HIGH_VALUE_PAID'
+        WHEN status = 'NEW' THEN 'AWAITING_PROCESSING'
+        WHEN status = 'CANCELLED' THEN 'CANCELLED_ORDER'
+        ELSE 'STANDARD'
+    END AS qa_risk_level
+FROM orders
+ORDER BY id;
+
+-- 17. Number each user's orders by creation date.
+SELECT
+    user_id,
+    order_number,
+    created_at,
+    ROW_NUMBER() OVER (
+        PARTITION BY user_id
+        ORDER BY created_at
+    ) AS order_sequence
+FROM orders
+ORDER BY user_id, order_sequence;
+
+-- 18. Rank orders by amount within each order status.
+SELECT
+    status,
+    order_number,
+    amount,
+    RANK() OVER (
+        PARTITION BY status
+        ORDER BY amount DESC
+    ) AS amount_rank
+FROM orders
+ORDER BY status, amount_rank;
+
+-- 19. Calculate a running total of order amounts by creation date.
+SELECT
+    order_number,
+    created_at,
+    amount,
+    SUM(amount) OVER (
+        ORDER BY created_at
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS running_total
+FROM orders
+ORDER BY created_at;
+
+-- 20. Write an assertion query that returns active users without primary addresses.
+SELECT u.id, u.email
+FROM users u
+LEFT JOIN addresses a
+    ON u.id = a.user_id
+   AND a.is_primary = TRUE
+WHERE u.status = 'ACTIVE'
+  AND a.id IS NULL;
+
+-- 21. Write an assertion query that returns successful payments where amount differs from the order amount.
+SELECT
+    o.id AS order_id,
+    o.order_number,
+    o.amount AS order_amount,
+    p.amount AS payment_amount
+FROM orders o
+INNER JOIN payments p
+    ON o.id = p.order_id
+WHERE p.status = 'SUCCESS'
+  AND o.amount <> p.amount;
+
+-- 22. Write a safe transaction that updates one order status, verifies it, and rolls it back.
+BEGIN;
+
+UPDATE orders
+SET status = 'PAID'
+WHERE id = 5;
+
+SELECT id, order_number, status
+FROM orders
+WHERE id = 5;
+
+ROLLBACK;

@@ -23,9 +23,14 @@ docs/
 queries/
   filters.sql
   aggregations.sql
+  assertions.sql
+  case_expressions.sql
   joins.sql
+  subqueries.sql
   tasks.sql
   solutions.sql
+  transactions.sql
+  window_functions.sql
   qa_validation_queries.sql
 ```
 
@@ -52,6 +57,9 @@ psql -d qa_sql_lab -f queries/qa_validation_queries.sql
 - Aggregations
 - JOINs
 - Subqueries
+- CASE expressions
+- Window functions
+- Transaction safety
 - Data quality checks
 - QA database validation
 - PostgreSQL practice

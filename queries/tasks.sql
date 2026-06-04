@@ -24,3 +24,23 @@
 -- 11. Find orders with negative amount.
 
 -- 12. Find paid orders that do not have a successful payment.
+
+-- 13. Find users who do not have any orders.
+
+-- 14. Find orders above the average order amount.
+
+-- 15. Classify users into age groups: UNKNOWN, UNDER_18, ADULT, SENIOR.
+
+-- 16. Classify orders into QA risk levels based on amount and status.
+
+-- 17. Number each user's orders by creation date.
+
+-- 18. Rank orders by amount within each order status.
+
+-- 19. Calculate a running total of order amounts by creation date.
+
+-- 20. Write an assertion query that returns active users without primary addresses.
+
+-- 21. Write an assertion query that returns successful payments where amount differs from the order amount.
+
+-- 22. Write a safe transaction that updates one order status, verifies it, and rolls it back.

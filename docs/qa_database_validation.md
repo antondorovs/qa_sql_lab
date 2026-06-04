@@ -10,6 +10,8 @@ Database validation checks whether stored data matches expected application beha
 - Invalid numeric values, such as negative order amounts.
 - Status mismatches, such as a paid order without a successful payment.
 - Amount mismatches, such as payment totals that differ from order totals.
+- Unexpected lifecycle transitions, such as `PAID` orders without successful payments.
+- Test data cleanup risks, such as manual updates made outside a transaction.
 
 ## Practical workflow
 
@@ -18,3 +20,12 @@ Database validation checks whether stored data matches expected application beha
 3. Write a query that returns only suspicious rows.
 4. Confirm whether each result is a real defect, expected test data, or a data setup issue.
 5. Save useful validation queries so they can be reused in regression testing.
+
+## Query types worth practicing
+
+- Filters for single-table checks.
+- JOINs for relationship checks.
+- Aggregations for duplicate and total checks.
+- Subqueries for existence and threshold checks.
+- CASE expressions for categorizing risky records.
+- Window functions for ordering, ranking, and sequence validation.
