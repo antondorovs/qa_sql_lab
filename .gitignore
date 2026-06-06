@@ -1,0 +1,36 @@
+# Environment and local credentials
+.env
+.env.*
+!.env.example
+.pgpass
+pgpass.conf
+credentials*.json
+
+# Private keys and certificates
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Database exports
+*.backup
+*.dump
+*.sql.gz
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# Editor settings
+.idea/
+.vscode/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
