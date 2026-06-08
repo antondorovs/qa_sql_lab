@@ -18,10 +18,16 @@ datasets/
   views.sql       -- create reusable QA views
 
 docs/
+  automated_validation.md
   sql_basics.md
   qa_database_validation.md
   postgresql_qa_tips.md
   cte_and_views.md
+
+tests/
+  run_all.sql             -- complete PostgreSQL test runner
+  data_contract.sql       -- sample data expectations
+  view_contract.sql       -- reusable view expectations
 
 queries/
   filters.sql
@@ -55,6 +61,16 @@ Then run examples or validation checks:
 psql -d qa_sql_lab -f queries/qa_validation_queries.sql
 ```
 
+## Automated Validation
+
+Run the complete test suite against an empty PostgreSQL database:
+
+```bash
+psql -d qa_sql_lab -v ON_ERROR_STOP=1 -f tests/run_all.sql
+```
+
+The suite rebuilds the lab, checks expected data-quality scenarios and executes every query file. GitHub Actions runs the same suite for pushes and pull requests targeting `main`.
+
 ## Topics
 
 - SQL basics
@@ -70,6 +86,7 @@ psql -d qa_sql_lab -f queries/qa_validation_queries.sql
 - Transaction safety
 - Data quality checks
 - QA database validation
+- Automated SQL regression testing
 - PostgreSQL practice
 
 ## Git Workflow
