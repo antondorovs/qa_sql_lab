@@ -1,6 +1,24 @@
 -- QA database validation queries
 -- Each query returns suspicious rows that should be investigated.
 
+-- Baseline summary for all reusable data quality rules
+SELECT
+    rule_id,
+    severity,
+    expected_issue_count,
+    actual_issue_count,
+    issue_count_delta,
+    baseline_status
+FROM data_quality_rule_report
+ORDER BY
+    CASE severity
+        WHEN 'CRITICAL' THEN 1
+        WHEN 'HIGH' THEN 2
+        WHEN 'MEDIUM' THEN 3
+        ELSE 4
+    END,
+    rule_id;
+
 -- Duplicate emails
 SELECT email, COUNT(*) AS duplicate_count
 FROM users

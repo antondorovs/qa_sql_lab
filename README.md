@@ -19,6 +19,7 @@ datasets/
 
 docs/
   automated_validation.md
+  data_quality_baselines.md
   sql_basics.md
   qa_database_validation.md
   postgresql_qa_tips.md
@@ -27,6 +28,7 @@ docs/
 tests/
   run_all.sql             -- complete PostgreSQL test runner
   data_contract.sql       -- sample data expectations
+  quality_report_contract.sql -- data quality baseline expectations
   view_contract.sql       -- reusable view expectations
 
 queries/
@@ -71,6 +73,24 @@ psql -d qa_sql_lab -v ON_ERROR_STOP=1 -f tests/run_all.sql
 
 The suite rebuilds the lab, checks expected data-quality scenarios and executes every query file. GitHub Actions runs the same suite for pushes and pull requests targeting `main`.
 
+GitLab CI runs the same PostgreSQL validation after changes reach the default
+branch or a merge request. Both platforms use `tests/run_all.sql` as the single
+test entry point.
+
+## Data Quality Report
+
+The `data_quality_rule_report` view provides a reusable baseline for known
+training-data issues:
+
+```sql
+SELECT *
+FROM data_quality_rule_report
+ORDER BY severity, rule_id;
+```
+
+It distinguishes expected fixture counts from regressions and improvements.
+See `docs/data_quality_baselines.md` for the rule format and extension workflow.
+
 ## Topics
 
 - SQL basics
@@ -85,6 +105,7 @@ The suite rebuilds the lab, checks expected data-quality scenarios and executes 
 - Window functions
 - Transaction safety
 - Data quality checks
+- Data quality baselines
 - QA database validation
 - Automated SQL regression testing
 - PostgreSQL practice

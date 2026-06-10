@@ -14,6 +14,9 @@
 \echo 'Checking view contracts'
 \ir view_contract.sql
 
+\echo 'Checking data quality baseline'
+\ir quality_report_contract.sql
+
 \echo 'Running query smoke tests'
 \ir ../queries/filters.sql
 \ir ../queries/aggregations.sql

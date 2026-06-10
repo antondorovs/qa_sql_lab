@@ -1,0 +1,26 @@
+stages:
+  - test
+
+variables:
+  POSTGRES_DB: qa_sql_lab
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  PGHOST: postgres
+  PGPORT: "5432"
+  PGDATABASE: qa_sql_lab
+  PGUSER: postgres
+  PGPASSWORD: postgres
+
+postgresql-validation:
+  stage: test
+  image: postgres:16-alpine
+  services:
+    - name: postgres:16-alpine
+      alias: postgres
+  before_script:
+    - until pg_isready; do sleep 1; done
+  script:
+    - psql --set=ON_ERROR_STOP=1 --file=tests/run_all.sql
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
